@@ -155,11 +155,38 @@ def calculate_perplexity(logprobs: List[float]) -> float:
     return np.exp(-avg_log_prob)
 
 def get_answer_logprobs(model_response: Dict, ground_truth: str) -> Dict:
-    # vLLM does not return token log probabilities in the same format as an HTTP API, so we return None.
+    """Extract log probabilities for the ground truth answer tokens."""
+    if not model_response.get('choices'):
+        return {
+            'answer_logprobs': None,
+            'answer_perplexity': None,
+            'answer_tokens': None
+        }
+    
+    logprobs = model_response['choices'][0].get('logprobs', [])
+    if not logprobs:
+        return {
+            'answer_logprobs': None,
+            'answer_perplexity': None,
+            'answer_tokens': None
+        }
+
+    tokens = logprobs['tokens']
+    token_logprobs = logprobs['token_logprobs']
+
+    # Attempt to match the ground truth against generated tokens
+    decoded_answer = ''.join(tokens).strip()
+    if ground_truth.strip() not in decoded_answer:
+        return {
+            'answer_logprobs': None,
+            'answer_perplexity': None,
+            'answer_tokens': None
+        }
+
     return {
-        'answer_logprobs': None,
-        'answer_perplexity': None,
-        'answer_tokens': None,
+        'answer_logprobs': token_logprobs,
+        'answer_perplexity': calculate_perplexity(token_logprobs),
+        'answer_tokens': tokens
     }
 
 
@@ -175,7 +202,7 @@ def process_batch_evaluation(config: DictConfig, batch_requests: List[EvalReques
         ) for req in batch_requests
     ]
     
-    sampling_params = SamplingParams(temperature=config.temperature, top_p=config.top_p)
+    sampling_params = SamplingParams(temperature=config.temperature, top_p=config.top_p, logprobs=0, prompt_logprobs=0)
     
     t1 = time.time()
     print(f"First prompt size: {len(json.dumps(first_prompts))/1024:.1f} KB")
@@ -201,13 +228,13 @@ def process_batch_evaluation(config: DictConfig, batch_requests: List[EvalReques
     
     t1 = time.time()
     print(f"Second prompt size: {len(json.dumps(second_prompts))/1024:.1f} KB")
-    second_outputs = llm.generate(second_prompts, sampling_params)
+    second_outputs = llm.generate(second_prompts, sampling_params)[0]
     t2 = time.time()
     print(f"Second generation took {t2 - t1:.2f} seconds")
     
     results = []
     for i, (req, first_output, second_output) in enumerate(zip(batch_requests, first_outputs, second_outputs)):
-        logprobs_data = get_answer_logprobs({}, req.solution.strip())
+        logprobs_data = get_answer_logprobs({"choices": [second_output]}, req.solution.strip())
         explanation = ""
         if req.cot:
             match_explanation = re.search(config.explanation_regex, first_output.outputs[0].text, re.DOTALL)
@@ -226,10 +253,10 @@ def process_batch_evaluation(config: DictConfig, batch_requests: List[EvalReques
             'perplexity': logprobs_data.get('answer_perplexity'),
             'ground_truth_logprobs': logprobs_data.get('answer_logprobs'),
             'ground_truth_tokens': logprobs_data.get('answer_tokens'),
-            'first_generation_logprobs': None,
-            'second_generation_logprobs': None,
-            'first_prompt_logprobs': None,
-            'second_prompt_logprobs': None,
+            'first_generation_logprobs': first_output.get('logprobs'),
+            'second_generation_logprobs': second_output.get('logprobs'),
+            'first_prompt_logprobs': first_output.get('prompt_logprobs'),
+            'second_prompt_logprobs': second_output.get('prompt_logprobs'),
         }
         results.append(result)
         print(f"Completed evaluation for subject {req.subject}, problem {req.problem_idx}")
