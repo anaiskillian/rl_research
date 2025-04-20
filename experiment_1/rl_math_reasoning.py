@@ -33,7 +33,6 @@ class Turn:
     prompt: str
     response: Optional[str] = None
     logprobs: Optional[Dict] = None
-    perplexity: Optional[float] = None
     tokens: Optional[List[str]] = None
 
 @dataclass
@@ -154,39 +153,37 @@ def calculate_perplexity(logprobs: List[float]) -> float:
     avg_log_prob = sum(logprobs) / len(logprobs)
     return np.exp(-avg_log_prob)
 
+
 def get_answer_logprobs(model_response: Dict, ground_truth: str) -> Dict:
     """Extract log probabilities for the ground truth answer tokens."""
     if not model_response.get('choices'):
         return {
             'answer_logprobs': None,
-            'answer_perplexity': None,
             'answer_tokens': None
         }
     
-    logprobs = model_response['choices'][0].get('logprobs', [])
-    if not logprobs:
+    prompt_logprobs = model_response['choices'][0].prompt_logprobs
+    prompt_token_ids = model_response['choices'][0].prompt_token_ids
+    print(prompt_logprobs)
+    if not prompt_logprobs:
         return {
             'answer_logprobs': None,
-            'answer_perplexity': None,
             'answer_tokens': None
         }
 
-    tokens = logprobs['tokens']
-    token_logprobs = logprobs['token_logprobs']
 
-    # Attempt to match the ground truth against generated tokens
-    decoded_answer = ''.join(tokens).strip()
-    if ground_truth.strip() not in decoded_answer:
-        return {
-            'answer_logprobs': None,
-            'answer_perplexity': None,
-            'answer_tokens': None
-        }
+    token_ids = []
+    token_logprobs = []
+
+    for i, token_id in enumerate(prompt_token_ids):
+        logprob_dict = prompt_logprobs[i]
+        if logprob_dict is not None and token_id in logprob_dict:
+            token_ids.append(token_id)
+            token_logprobs.append(logprob_dict[token_id].logprob)
 
     return {
         'answer_logprobs': token_logprobs,
-        'answer_perplexity': calculate_perplexity(token_logprobs),
-        'answer_tokens': tokens
+        'answer_tokens': token_ids
     }
 
 
@@ -228,7 +225,7 @@ def process_batch_evaluation(config: DictConfig, batch_requests: List[EvalReques
     
     t1 = time.time()
     print(f"Second prompt size: {len(json.dumps(second_prompts))/1024:.1f} KB")
-    second_outputs = llm.generate(second_prompts, sampling_params)[0]
+    second_outputs = llm.generate(second_prompts, sampling_params)
     t2 = time.time()
     print(f"Second generation took {t2 - t1:.2f} seconds")
     
@@ -250,13 +247,12 @@ def process_batch_evaluation(config: DictConfig, batch_requests: List[EvalReques
             'second_turn_prompt': second_prompts[i],
             'second_turn_response': second_output.outputs[0].text,
             'explanation': explanation if req.cot else None,
-            'perplexity': logprobs_data.get('answer_perplexity'),
             'ground_truth_logprobs': logprobs_data.get('answer_logprobs'),
             'ground_truth_tokens': logprobs_data.get('answer_tokens'),
-            'first_generation_logprobs': first_output.get('logprobs'),
-            'second_generation_logprobs': second_output.get('logprobs'),
-            'first_prompt_logprobs': first_output.get('prompt_logprobs'),
-            'second_prompt_logprobs': second_output.get('prompt_logprobs'),
+            'first_generation_logprobs': first_output.prompt_logprobs,
+            'second_generation_logprobs': second_output.prompt_logprobs,
+            'first_prompt_logprobs': first_output.encoder_prompt,
+            'second_prompt_logprobs': second_output.encoder_prompt
         }
         results.append(result)
         print(f"Completed evaluation for subject {req.subject}, problem {req.problem_idx}")
@@ -278,7 +274,6 @@ def main(cfg: DictConfig):
 
     print(f"Number of shots: {shot}")
     print(f"Chain of Thought enabled: {cot}")
-    print(f"Perplexity measurement enabled: {cfg.get('measure_perplexity', False)}")
     print(f"Batch size: {BATCH_SIZE}")
     print("-" * 50)
 
@@ -333,9 +328,6 @@ def main(cfg: DictConfig):
     print("Results:")
     print(df[COLUMNS_TO_SAVE])
     
-    if cfg.get('measure_perplexity', False):
-        overall_perplexity = df['perplexity'].mean()
-        print(f"Overall perplexity: {overall_perplexity:.4f}")
 
 if __name__ == "__main__":
     main()
