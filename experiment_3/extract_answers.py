@@ -17,13 +17,14 @@ def get_timestamp():
     """Get current timestamp in a readable format."""
     return datetime.now().strftime("%Y%m%d_%H%M%S")
 
-def save_experiment_info(output_dir, timestamp, cot_prompt, nocot_prompt, results):
+def save_experiment_info(output_dir, timestamp, cot_prompt, nocot_prompt, results, model_info):
     """Save experiment information and results to a timestamped file."""
     filename = f"experiment_{timestamp}.json"
     filepath = os.path.join(output_dir, filename)
     
     experiment_data = {
         "timestamp": timestamp,
+        "model": model_info,
         "prompts": {
             "cot": cot_prompt,
             "nocot": nocot_prompt
@@ -92,8 +93,8 @@ COT_PROMPT = (
 )
 
 NOCOT_PROMPT = (
-    "Do not think about the problem step-by-step."
-    "YOU MUST PROVIDE just your FINAL answer boxed like this: \\boxed{your_answer}."
+    "Do NOT think about the problem step-by-step."
+    "YOU MUST PROVIDE only your FINAL answer boxed like this: \\boxed{your_answer}."
 )
 
 def process_csv_file(filepath, llm, sampling_params, mode, limit=5):
@@ -121,7 +122,7 @@ def process_csv_file(filepath, llm, sampling_params, mode, limit=5):
                     continue
 
                 if mode == "cot":
-                    prompt = f"{COT_PROMPT}\nProblem: {problem}\nSolution:"
+                    prompt = f"{COT_PROMPT}\nProblem: {problem}\nAnswer:"
                 else:  # nocot
                     prompt = f"{NOCOT_PROMPT}\nProblem: {problem}\nAnswer:"
 
@@ -155,13 +156,25 @@ def process_files():
     output_dir = ensure_output_dir()
     timestamp = get_timestamp()
     
+    # Model configuration
+    model_name = "Qwen/Qwen2.5-0.5B-Instruct"
+    model_info = {
+        "name": model_name,
+        "parameters": {
+            "trust_remote_code": True,
+            "tensor_parallel_size": 1,
+            "gpu_memory_utilization": 0.9,
+            "max_model_len": 2048
+        }
+    }
+    
     # Initialize model
     llm = vllm.LLM(
-        model="Qwen/Qwen2.5-0.5B-Instruct",
-        trust_remote_code=True,
-        tensor_parallel_size=1,
-        gpu_memory_utilization=0.9,
-        max_model_len=2048
+        model=model_name,
+        trust_remote_code=model_info["parameters"]["trust_remote_code"],
+        tensor_parallel_size=model_info["parameters"]["tensor_parallel_size"],
+        gpu_memory_utilization=model_info["parameters"]["gpu_memory_utilization"],
+        max_model_len=model_info["parameters"]["max_model_len"]
     )
 
     # Sampling configuration
@@ -182,7 +195,7 @@ def process_files():
     }
 
     # Save experiment info and results
-    save_experiment_info(output_dir, timestamp, COT_PROMPT, NOCOT_PROMPT, results)
+    save_experiment_info(output_dir, timestamp, COT_PROMPT, NOCOT_PROMPT, results, model_info)
 
 if __name__ == '__main__':
     process_files()
