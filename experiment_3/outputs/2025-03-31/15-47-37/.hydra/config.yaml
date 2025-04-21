@@ -1,0 +1,29 @@
+subjects:
+- math
+solution_regex: '#### (?P<answer>.+)'
+explanation_regex: Explanation:(?P<explanation>.*?)(?=####)
+ground_truth_regex: '&&&& (?P<answer>.*?)($|
+
+  )'
+dataset_name: openai/gsm8k
+split_to_use: train
+model_path: /n/holylfs06/LABS/kempner_shared/Everyone/testbed/models/Llama-3.1-405B-Instruct
+base_model_path: /n/holylfs06/LABS/kempner_shared/Everyone/testbed/models/Llama-3.1-405B
+model_url: http://localhost:8000/v1/completions
+output_path: ./results
+max_workers: 6
+measure_perplexity: true
+max_tokens: 1024
+temperature: 1.0
+top_p: 1.0
+no_response: true
+shot: 2
+cot: true
+remove_model_answer_in_second_prompt: false
+include_ground_truth_explanation_in_second_prompt: true
+include_system_prompt: true
+problems_to_eval_per_subject: -1
+batch_size: 100
+keep_boxes_in_answer: true
+depth: 5
+branches: 3

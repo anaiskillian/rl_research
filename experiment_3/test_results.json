@@ -1,0 +1,66 @@
+{
+  "cot": [
+    {
+      "problem_idx": "2",
+      "problem": "Betty is saving money for a new wallet which costs $100. Betty has only half of the money she needs. Her parents decided to give her $15 for that purpose, and her grandparents twice as much as her parents. How much more money does Betty need to buy the wallet?",
+      "boxed_answer": null,
+      "ground_truth": "5"
+    },
+    {
+      "problem_idx": "3",
+      "problem": "Julie is reading a 120-page book. Yesterday, she was able to read 12 pages and today, she read twice as many pages as yesterday. If she wants to read half of the remaining pages tomorrow, how many pages should she read?",
+      "boxed_answer": null,
+      "ground_truth": "42"
+    },
+    {
+      "problem_idx": "4",
+      "problem": "James writes a 3-page letter to 2 different friends twice a week.  How many pages does he write a year?",
+      "boxed_answer": null,
+      "ground_truth": "624"
+    },
+    {
+      "problem_idx": "5",
+      "problem": "Mark has a garden with flowers. He planted plants of three different colors in it. Ten of them are yellow, and there are 80% more of those in purple. There are only 25% as many green flowers as there are yellow and purple flowers. How many flowers does Mark have in his garden?",
+      "boxed_answer": null,
+      "ground_truth": "35"
+    },
+    {
+      "problem_idx": "6",
+      "problem": "Albert is wondering how much pizza he can eat in one day. He buys 2 large pizzas and 2 small pizzas. A large pizza has 16 slices and a small pizza has 8 slices. If he eats it all, how many pieces does he eat that day?",
+      "boxed_answer": null,
+      "ground_truth": "48"
+    }
+  ],
+  "nocot": [
+    {
+      "problem_idx": "2",
+      "problem": "Betty is saving money for a new wallet which costs $100. Betty has only half of the money she needs. Her parents decided to give her $15 for that purpose, and her grandparents twice as much as her parents. How much more money does Betty need to buy the wallet?",
+      "boxed_answer": null,
+      "ground_truth": "5"
+    },
+    {
+      "problem_idx": "3",
+      "problem": "Julie is reading a 120-page book. Yesterday, she was able to read 12 pages and today, she read twice as many pages as yesterday. If she wants to read half of the remaining pages tomorrow, how many pages should she read?",
+      "boxed_answer": "35",
+      "ground_truth": "42"
+    },
+    {
+      "problem_idx": "4",
+      "problem": "James writes a 3-page letter to 2 different friends twice a week.  How many pages does he write a year?",
+      "boxed_answer": null,
+      "ground_truth": "624"
+    },
+    {
+      "problem_idx": "5",
+      "problem": "Mark has a garden with flowers. He planted plants of three different colors in it. Ten of them are yellow, and there are 80% more of those in purple. There are only 25% as many green flowers as there are yellow and purple flowers. How many flowers does Mark have in his garden?",
+      "boxed_answer": null,
+      "ground_truth": "35"
+    },
+    {
+      "problem_idx": "6",
+      "problem": "Albert is wondering how much pizza he can eat in one day. He buys 2 large pizzas and 2 small pizzas. A large pizza has 16 slices and a small pizza has 8 slices. If he eats it all, how many pieces does he eat that day?",
+      "boxed_answer": null,
+      "ground_truth": "48"
+    }
+  ]
+}

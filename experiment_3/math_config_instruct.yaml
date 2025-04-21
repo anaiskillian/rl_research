@@ -1,0 +1,36 @@
+subjects:
+  - math
+
+solution_regex: "#### (?P<answer>.+)"
+explanation_regex: "Explanation:(?P<explanation>.*?)(?=####)"
+ground_truth_regex: "&&&& (?P<answer>.*?)($|\n)"
+
+# Instead of a local dataset path, we now use the Hugging Face dataset
+dataset_name: "openai/gsm8k"
+split_to_use: "train"
+
+model_path: "/n/holylfs06/LABS/kempner_shared/Everyone/testbed/models/Llama-3.1-405B-Instruct"
+base_model_path: "/n/holylfs06/LABS/kempner_shared/Everyone/testbed/models/Llama-3.1-405B"  # Only used in the score_prompt_base_model.py script 
+model_url: "http://localhost:8000/v1/completions"
+output_path: "/n/netscratch/kdbrantley_lab/Lab/akillian"
+
+max_workers: 6
+measure_perplexity: true
+
+max_tokens: 1024
+temperature: 1.0
+top_p: 1.0
+no_response: true  # Do not respond after giving the ground truth answer after model attempt
+
+shot: 2         # Number of few-shot examples
+cot: false       # Enable chain of thought
+remove_model_answer_in_second_prompt: false
+include_ground_truth_explanation_in_second_prompt: true
+include_system_prompt: true
+problems_to_eval_per_subject: -1
+batch_size: 100
+keep_boxes_in_answer: true  # Keep LaTeX boxes in the prompt
+
+# For tree search
+depth: 5
+branches: 3
