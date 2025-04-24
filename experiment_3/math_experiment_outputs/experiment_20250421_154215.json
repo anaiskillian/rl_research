@@ -1,0 +1,92 @@
+{
+  "timestamp": "20250421_154215",
+  "model": {
+    "name": "Qwen/Qwen2.5-14B-Instruct",
+    "parameters": {
+      "trust_remote_code": true,
+      "tensor_parallel_size": 1,
+      "gpu_memory_utilization": 0.9,
+      "max_model_len": 2048
+    }
+  },
+  "prompts": {
+    "cot": "Solve the following math problem step by step. At the end, it is required to PROVIDE the calculated answer in a box like this: \\boxed{your_answer}.",
+    "nocot": "Do NOT think about the problem step-by-step. You must provide ONLY your FINAL answer boxed like this: \\boxed{your_answer}."
+  },
+  "results": {
+    "cot": [
+      {
+        "problem_idx": "2",
+        "problem": "Betty is saving money for a new wallet which costs $100. Betty has only half of the money she needs. Her parents decided to give her $15 for that purpose, and her grandparents twice as much as her parents. How much more money does Betty need to buy the wallet?",
+        "model_response": "Step 1: Calculate the amount of money Betty currently has.\nBetty needs $100 for the wallet and has only half of the money she needs, so she currently has $100 / 2 = $50.\n\nStep 2: Calculate the amount of money Betty's grandparents give her.\nBetty's grandparents give her twice as much as her parents, who gave her $15. So, her grandparents give her $15 * 2 = $30.\n\nStep 3: Calculate the total amount of money Betty has after receiving money from her parents and grandparents.\nBetty initially has $50, and after receiving $15 from her parents and $30 from her grandparents, she has $50 + $15 + $30 = $95.\n\nStep 4: Calculate how much more money Betty needs to buy the wallet.\nThe wallet costs $100, and Betty has $95, so she needs $100 - $95 = $5 more.\n\nTherefore, the amount of money Betty still needs to buy the wallet is \\boxed{5",
+        "model_answer": "5",
+        "ground_truth": "5"
+      },
+      {
+        "problem_idx": "3",
+        "problem": "Julie is reading a 120-page book. Yesterday, she was able to read 12 pages and today, she read twice as many pages as yesterday. If she wants to read half of the remaining pages tomorrow, how many pages should she read?",
+        "model_response": "Step 1: Calculate the total number of pages Julie has read so far.\nYesterday, Julie read 12 pages. Today, she read twice as many pages as yesterday, which is 2 * 12 = 24 pages.\nSo, the total number of pages she has read so far is 12 + 24 = 36 pages.\n\nStep 2: Calculate the number of pages remaining in the book.\nThe book has 120 pages in total. Julie has read 36 pages, so the remaining pages are 120 - 36 = 84 pages.\n\nStep 3: Calculate the number of pages Julie plans to read tomorrow.\nJulie wants to read half of the remaining pages tomorrow. The remaining pages are 84, so half of that is 84 / 2 = 42 pages.\n\nTherefore, Julie should read \\boxed{42",
+        "model_answer": "42",
+        "ground_truth": "42"
+      },
+      {
+        "problem_idx": "4",
+        "problem": "James writes a 3-page letter to 2 different friends twice a week.  How many pages does he write a year?",
+        "model_response": "To determine how many pages James writes in a year, we need to break down the problem step by step.\n\n1. **Calculate the number of pages James writes per week:**\n   - James writes a 3-page letter to 2 different friends.\n   - He writes these letters twice a week.\n   - Therefore, the number of pages he writes per week is:\n     \\[\n     3 \\text{ pages/letter",
+        "model_answer": "1",
+        "ground_truth": "624"
+      },
+      {
+        "problem_idx": "5",
+        "problem": "Mark has a garden with flowers. He planted plants of three different colors in it. Ten of them are yellow, and there are 80% more of those in purple. There are only 25% as many green flowers as there are yellow and purple flowers. How many flowers does Mark have in his garden?",
+        "model_response": "Step 1: Calculate the number of purple flowers.\n- There are 80% more purple flowers than yellow flowers.\n- Number of purple flowers = Number of yellow flowers + 80% of the number of yellow flowers.\n- Number of purple flowers = 10 + 0.80 * 10 = 10 + 8 = 18.\n\nStep 2: Calculate the total number of yellow and purple flowers.\n- Total yellow and purple flowers = Number of yellow flowers + Number of purple flowers.\n- Total yellow and purple flowers = 10 + 18 = 28.\n\nStep 3: Calculate the number of green flowers.\n- There are 25% as many green flowers as there are yellow and purple flowers.\n- Number of green flowers = 25% of the total number of yellow and purple flowers.\n- Number of green flowers = 0.25 * 28 = 7.\n\nStep 4: Calculate the total number of flowers in the garden.\n- Total flowers = Number of yellow flowers + Number of purple flowers + Number of green flowers.\n- Total flowers = 10 + 18 + 7 = 35.\n\nTherefore, the total number of flowers in Mark's garden is \\(\\boxed{35",
+        "model_answer": "35",
+        "ground_truth": "35"
+      },
+      {
+        "problem_idx": "6",
+        "problem": "Albert is wondering how much pizza he can eat in one day. He buys 2 large pizzas and 2 small pizzas. A large pizza has 16 slices and a small pizza has 8 slices. If he eats it all, how many pieces does he eat that day?",
+        "model_response": "To determine how many slices of pizza Albert eats in one day, we need to calculate the total number of slices from both the large and small pizzas.\n\n1. **Calculate the total number of slices from the large pizzas:**\n   - Each large pizza has 16 slices.\n   - Albert buys 2 large pizzas.\n   - Therefore, the total number of slices from the large pizzas is:\n     \\[\n     2 \\text{ large pizzas",
+        "model_answer": "1",
+        "ground_truth": "48"
+      }
+    ],
+    "nocot": [
+      {
+        "problem_idx": "2",
+        "problem": "Betty is saving money for a new wallet which costs $100. Betty has only half of the money she needs. Her parents decided to give her $15 for that purpose, and her grandparents twice as much as her parents. How much more money does Betty need to buy the wallet?",
+        "model_response": "\\boxed{5",
+        "model_answer": "5",
+        "ground_truth": "5"
+      },
+      {
+        "problem_idx": "3",
+        "problem": "Julie is reading a 120-page book. Yesterday, she was able to read 12 pages and today, she read twice as many pages as yesterday. If she wants to read half of the remaining pages tomorrow, how many pages should she read?",
+        "model_response": "\\boxed{42",
+        "model_answer": "42",
+        "ground_truth": "42"
+      },
+      {
+        "problem_idx": "4",
+        "problem": "James writes a 3-page letter to 2 different friends twice a week.  How many pages does he write a year?",
+        "model_response": "\\boxed{260",
+        "model_answer": "260",
+        "ground_truth": "624"
+      },
+      {
+        "problem_idx": "5",
+        "problem": "Mark has a garden with flowers. He planted plants of three different colors in it. Ten of them are yellow, and there are 80% more of those in purple. There are only 25% as many green flowers as there are yellow and purple flowers. How many flowers does Mark have in his garden?",
+        "model_response": "\\boxed{51",
+        "model_answer": "51",
+        "ground_truth": "35"
+      },
+      {
+        "problem_idx": "6",
+        "problem": "Albert is wondering how much pizza he can eat in one day. He buys 2 large pizzas and 2 small pizzas. A large pizza has 16 slices and a small pizza has 8 slices. If he eats it all, how many pieces does he eat that day?",
+        "model_response": "\\boxed{48",
+        "model_answer": "48",
+        "ground_truth": "48"
+      }
+    ]
+  }
+}
